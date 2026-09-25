@@ -1,0 +1,1 @@
+# SCTEC_2026_Projeto_final
