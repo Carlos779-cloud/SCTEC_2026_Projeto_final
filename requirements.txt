@@ -1,0 +1,22 @@
+# ==============================================================================
+# Dependências do Projeto: Classificação de Dígitos Manuscritos com ML (MNIST)
+# Projeto Final - SCTEC 2026
+# ==============================================================================
+
+# Manipulação de dados e álgebra linear
+numpy>=1.26.0
+pandas>=2.0.0
+
+# Visualização de dados e relatórios gráficos (Fases 1, 2, 4 e 5)
+matplotlib>=3.8.0
+
+# Modelos de Machine Learning clássicos e métricas (RF, KNN, SVM, MLP)
+scikit-learn>=1.4.0
+joblib>=1.3.0
+
+# Visão Computacional para imagens do Paint (Fase 5)
+opencv-python>=4.9.0
+
+# Deep Learning (Rede Neural Convolucional - Fase 3, 4 e 5)
+tensorflow>=2.16.0
+keras>=3.0.0
