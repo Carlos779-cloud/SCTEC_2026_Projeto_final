@@ -185,10 +185,149 @@ def processar_imagem_externa_opencv(caminho_imagem):
     return canvas, img_rgb, thresh
 
 
+def gerar_tabela_resultados_paint(dados_visuais, caminho_saida="outputs/tabela_resultados_paint.png"):
+    """Gera uma tabela visual PNG com miniaturas das imagens do Paint e os resultados dos 5 modelos.
+
+    Cada linha exibe:
+    - Miniatura da imagem original do Paint
+    - Nome do arquivo
+    - Predições individuais de cada modelo (RF, KNN, SVM, MLP, Keras CNN)
+    - Consenso (voto majoritário)
+    - Votação (ex: 5/5)
+    - Concordância (%) com código de cor verde/laranja/vermelho
+
+    Args:
+        dados_visuais (list): Lista de dicts com campos: nome, img_orig, rf, knn,
+                              svm, mlp, keras, conf_keras, consenso, votos.
+        caminho_saida (str): Caminho para salvar a imagem PNG da tabela.
+    """
+    import matplotlib.patches as mpatches
+    from matplotlib.gridspec import GridSpec
+
+    num_linhas = len(dados_visuais)
+    col_headers = ["Arquivo", "RF", "KNN", "SVM", "MLP", "Keras\nCNN", "Consenso", "Votação", "Concord.\n(%)"]
+    num_cols_dados = len(col_headers)
+
+    fig_w = 16
+    row_h = 1.1
+    header_h = 0.7
+    img_col_w = 1.2
+    fig_h = header_h + num_linhas * row_h + 0.5
+
+    fig = plt.figure(figsize=(fig_w, fig_h), facecolor="#f8f9fa")
+    fig.suptitle(
+        "Resultados dos 5 Modelos nas Imagens do Paint",
+        fontsize=15, fontweight="bold", y=0.99, color="#1a202c"
+    )
+
+    total_cols = 1 + num_cols_dados
+    gs = GridSpec(
+        num_linhas + 1,
+        total_cols,
+        figure=fig,
+        left=0.01, right=0.99,
+        top=0.93, bottom=0.06,
+        hspace=0.12, wspace=0.05,
+        width_ratios=[img_col_w] + [1] * num_cols_dados,
+        height_ratios=[0.7] + [1.0] * num_linhas,
+    )
+
+    # Cabeçalho da coluna de imagens
+    ax_img_hdr = fig.add_subplot(gs[0, 0])
+    ax_img_hdr.set_facecolor("#2b5c8f")
+    ax_img_hdr.text(0.5, 0.5, "Imagem\nPaint", ha="center", va="center",
+                    fontsize=9, fontweight="bold", color="white",
+                    transform=ax_img_hdr.transAxes)
+    ax_img_hdr.set_xticks([])
+    ax_img_hdr.set_yticks([])
+    for sp in ax_img_hdr.spines.values():
+        sp.set_edgecolor("#1a3a5c")
+
+    # Cabeçalhos das colunas de dados
+    for j, label in enumerate(col_headers):
+        ax_h = fig.add_subplot(gs[0, j + 1])
+        ax_h.set_facecolor("#2b5c8f")
+        ax_h.text(0.5, 0.5, label, ha="center", va="center",
+                  fontsize=8.5, fontweight="bold", color="white",
+                  transform=ax_h.transAxes)
+        ax_h.set_xticks([])
+        ax_h.set_yticks([])
+        for sp in ax_h.spines.values():
+            sp.set_edgecolor("#1a3a5c")
+
+    # Linhas de dados
+    for i, item in enumerate(dados_visuais):
+        row_bg = "#ffffff" if i % 2 == 0 else "#edf2f7"
+        votos = item["votos"]
+        concordancia = (votos / 5) * 100
+        cor_concord = "#1a7f37" if votos >= 4 else ("#b05a00" if votos == 3 else "#b30000")
+        bg_concord   = "#d4edda" if votos >= 4 else ("#fff3cd" if votos == 3 else "#f8d7da")
+        emoji        = "100%" if votos == 5 else (f"{concordancia:.0f}%")
+
+        # Coluna 0: Miniatura da imagem original
+        ax_img = fig.add_subplot(gs[i + 1, 0])
+        ax_img.imshow(item["img_orig"], aspect="auto")
+        ax_img.set_xticks([])
+        ax_img.set_yticks([])
+        ax_img.set_facecolor(row_bg)
+        for sp in ax_img.spines.values():
+            sp.set_edgecolor("#cbd5e0")
+            sp.set_linewidth(0.5)
+
+        # Valores das colunas de texto
+        valores = [
+            item["nome"],
+            str(item["rf"]),
+            str(item["knn"]),
+            str(item["svm"]),
+            str(item["mlp"]),
+            f"{item['keras']}\n({item['conf_keras']:.0f}%)",
+            f"Digito {item['consenso']}",
+            f"{votos}/5",
+            f"{concordancia:.0f}%",
+        ]
+        fundos    = [row_bg] * 7 + [row_bg, bg_concord]
+        cores_txt = ["#2d3748"] * 7 + ["#2d3748", cor_concord]
+        bolds     = [False] + [True] * 5 + [True, True, True]
+
+        for j, (val, bg, cor, negrito) in enumerate(zip(valores, fundos, cores_txt, bolds)):
+            ax_c = fig.add_subplot(gs[i + 1, j + 1])
+            ax_c.set_facecolor(bg)
+            ax_c.text(
+                0.5, 0.5, val,
+                ha="center", va="center",
+                fontsize=8.5,
+                fontweight="bold" if negrito else "normal",
+                color=cor,
+                transform=ax_c.transAxes,
+            )
+            ax_c.set_xticks([])
+            ax_c.set_yticks([])
+            for sp in ax_c.spines.values():
+                sp.set_edgecolor("#cbd5e0")
+                sp.set_linewidth(0.5)
+
+    # Legenda
+    leg_patches = [
+        mpatches.Patch(color="#d4edda", label="Alta concordancia (>=80%)"),
+        mpatches.Patch(color="#fff3cd", label="Concordancia media (60%)"),
+        mpatches.Patch(color="#f8d7da", label="Baixa concordancia (<=40%)"),
+    ]
+    fig.legend(handles=leg_patches, loc="lower center", ncol=3,
+               fontsize=8, frameon=True, fancybox=True,
+               bbox_to_anchor=(0.5, 0.0), framealpha=0.9)
+
+    os.makedirs(os.path.dirname(caminho_saida), exist_ok=True)
+    plt.savefig(caminho_saida, dpi=180, bbox_inches="tight", facecolor=fig.get_facecolor())
+    plt.close(fig)
+    print(f"\n-> Tabela visual de resultados do Paint salva em: '{caminho_saida}'")
+
+
 def testar_imagens_externas_todos_modelos(
     pasta_imagens="imagem",
     diretorio_modelos="models",
     caminho_saida="outputs/teste_imagens_todos_modelos.png",
+    caminho_tabela="outputs/tabela_resultados_paint.png",
 ):
     """Testa as imagens feitas no Paint em TODOS OS 5 MODELOS e compara as previsões.
 
@@ -347,6 +486,9 @@ def testar_imagens_externas_todos_modelos(
     plt.close(fig)
     print(f"\n-> Painel comparativo de TODOS OS MODELOS salvo em: '{caminho_saida}'")
 
+    # 4. Gera a tabela visual com miniaturas + resultados completos
+    gerar_tabela_resultados_paint(dados_visuais, caminho_saida=caminho_tabela)
+
     return df_comparativo
 
 
@@ -371,6 +513,7 @@ def executar_fase_robustez_completa(dados_preparados, diretorio_saida="outputs",
         pasta_imagens=pasta_imagens,
         diretorio_modelos="models",
         caminho_saida=os.path.join(diretorio_saida, "teste_imagens_todos_modelos.png"),
+        caminho_tabela=os.path.join(diretorio_saida, "tabela_resultados_paint.png"),
     )
 
     print("\n" + "=" * 65)
@@ -378,6 +521,7 @@ def executar_fase_robustez_completa(dados_preparados, diretorio_saida="outputs",
     print("=" * 65)
 
     return res_ausentes, df_todos_modelos
+
 
 
 if __name__ == "__main__":
