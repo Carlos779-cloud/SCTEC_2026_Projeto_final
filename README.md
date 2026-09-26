@@ -57,7 +57,8 @@ SCTEC_2026_Projeto_final/
     ├── comparativo_modelos.png
     ├── matrizes_confusao.png
     ├── robustez_classes_ausentes.png
-    └── teste_imagens_todos_modelos.png
+    ├── teste_imagens_todos_modelos.png
+    └── tabela_resultados_paint.png
 ```
 
 ---
@@ -131,15 +132,15 @@ python main.py
 
 | Posição | Modelo | Acurácia (%) | Precisão (%) | Recall (%) | F1-Score (%) | Tempo Treino (s) | Tempo Teste (s) | Latência (ms/img) |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 🥇 | **Rede Neural Keras (CNN)** | **98.94%** | **98.95%** | **98.94%** | **98.94%** | 94.51 s | 1.75 s | 0.167 ms |
-| 🥈 | **Rede Neural MLP** | **97.47%** | **97.47%** | **97.47%** | **97.47%** | 23.71 s | 0.05 s | **0.005 ms** ⚡ |
-| 🥉 | **SVM (Kernel RBF)** | **97.26%** | **97.26%** | **97.26%** | **97.25%** | 34.28 s | 44.49 s | 4.237 ms |
-| 4 | **KNN ($k=3$)** | **97.12%** | **97.15%** | **97.12%** | **97.12%** | **0.02 s** | 12.24 s | 1.165 ms |
-| 5 | **Random Forest** | **96.63%** | **96.63%** | **96.63%** | **96.63%** | 12.76 s | 0.34 s | 0.032 ms |
+| 🥇 | **Rede Neural Keras (CNN)** | **98.97%** | **98.98%** | **98.97%** | **98.97%** | 94.25 s | 1.31 s | 0.124 ms |
+| 🥈 | **Rede Neural MLP** | **97.47%** | **97.47%** | **97.47%** | **97.47%** | 24.64 s | 0.04 s | **0.004 ms** ⚡ |
+| 🥉 | **SVM (Kernel RBF)** | **97.26%** | **97.26%** | **97.26%** | **97.25%** | 43.39 s | 44.68 s | 4.255 ms |
+| 4 | **KNN ($k=3$)** | **97.12%** | **97.15%** | **97.12%** | **97.12%** | **0.03 s** | 12.13 s | 1.155 ms |
+| 5 | **Random Forest** | **96.63%** | **96.63%** | **96.63%** | **96.63%** | 13.68 s | 0.32 s | 0.031 ms |
 
 #### Destaques da Análise:
-- **Maior Acurácia**: A **Rede Neural Convolucional (Keras)** atingiu **98.94%** de acurácia global, demonstrando a superioridade dos filtros convolucionais para padrões espaciais.
-- **Maior Eficiência (Custo-Benefício)**: A **Rede Neural MLP** entregou **97.47%** de acurácia com tempo de inferência ultrabaixo de **0.005 ms por amostra** (ideal para aplicações em tempo real com hardware modesto).
+- **Maior Acurácia**: A **Rede Neural Convolucional (Keras)** atingiu **98.97%** de acurácia global, demonstrando a superioridade dos filtros convolucionais para padrões espaciais.
+- **Maior Eficiência (Custo-Benefício)**: A **Rede Neural MLP** entregou **97.47%** de acurácia com tempo de inferência ultrabaixo de **0.004 ms por amostra** (ideal para aplicações em tempo real com hardware modesto).
 - **Matrizes de Confusão**: Salvas em `outputs/matrizes_confusao.png`, evidenciando que os principais erros ocorrem em pares de caligrafias semelhantes (ex: 4 e 9, ou 3 e 5).
 
 ---
@@ -162,7 +163,7 @@ O pipeline OpenCV implementado em `src/robustness.py`:
 #### Resultados dos 5 Modelos nas Imagens do Paint:
 | Arquivo | Random Forest | KNN | SVM | MLP | Keras CNN | Consenso | Votação | Concordância (%) |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Imagem 1.png** | 0 | 0 | 0 | 0 | 0 | **Dígito 0** | 5/5 | **100.0%** 🟢 |
+| **Imagem 1.png** | 0 | 0 | 0 | 0 | 8 | **Dígito 0** | 4/5 | **80.0%** 🟢 |
 | **Imagem 2.png** | 4 | 1 | 4 | 4 | 2 | **Dígito 4** | 3/5 | 60.0% 🟡 |
 | **Imagem 3.png** | 1 | 1 | 1 | 1 | 4 | **Dígito 1** | 4/5 | **80.0%** 🟢 |
 | **Imagem 4.png** | 3 | 9 | 3 | 9 | 9 | **Dígito 9** | 3/5 | 60.0% 🟡 |
@@ -176,11 +177,12 @@ O pipeline OpenCV implementado em `src/robustness.py`:
 | **Imagem 12.png** | 5 | 5 | 5 | 5 | 5 | **Dígito 5** | 5/5 | **100.0%** 🟢 |
 
 - *Painel Visual Comparativo*: `outputs/teste_imagens_todos_modelos.png`.
+- *Tabela Visual Completa com Miniaturas*: `outputs/tabela_resultados_paint.png`.
 
 ---
 
 ## 🏆 Conclusão e Modelo Recomendado
 
-1. **Modelo Selecionado para Máxima Precisão**: **Rede Neural Convolucional (Keras)** com **98.94% de acurácia** no teste e alta robustez no processamento de imagens reais do Paint.
-2. **Modelo Selecionado para Máxima Eficiência**: **Rede Neural MLP (Scikit-Learn)** com **97.47% de acurácia** e latência ultrarrápida de **0.005 ms por imagem**.
+1. **Modelo Selecionado para Máxima Precisão**: **Rede Neural Convolucional (Keras)** com **98.97% de acurácia** no teste e alta robustez no processamento de imagens reais do Paint.
+2. **Modelo Selecionado para Máxima Eficiência**: **Rede Neural MLP (Scikit-Learn)** com **97.47% de acurácia** e latência ultrarrápida de **0.004 ms por imagem**.
 3. **Poder do Comitê de Modelos (Ensemble)**: A votação de consenso entre os 5 modelos garantiu a correção de casos atípicos ou ruidosos, atingindo unanimidade em 5 das 12 amostras manuscritas externas.
