@@ -57,7 +57,8 @@ SCTEC_2026_Projeto_final/
     ├── comparativo_modelos.png
     ├── matrizes_confusao.png
     ├── robustez_classes_ausentes.png
-    └── teste_imagens_todos_modelos.png
+    ├── teste_imagens_todos_modelos.png
+    └── tabela_resultados_paint.png
 ```
 
 ---
