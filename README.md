@@ -186,3 +186,6 @@ O pipeline OpenCV implementado em `src/robustness.py`:
 1. **Modelo Selecionado para Máxima Precisão**: **Rede Neural Convolucional (Keras)** com **98.97% de acurácia** no teste e alta robustez no processamento de imagens reais do Paint.
 2. **Modelo Selecionado para Máxima Eficiência**: **Rede Neural MLP (Scikit-Learn)** com **97.47% de acurácia** e latência ultrarrápida de **0.004 ms por imagem**.
 3. **Poder do Comitê de Modelos (Ensemble)**: A votação de consenso entre os 5 modelos garantiu a correção de casos atípicos ou ruidosos, atingindo unanimidade em 5 das 12 amostras manuscritas externas.
+
+Entrega Prevista: Outubro/2026
+Autor: Carlos Joao Reinert
