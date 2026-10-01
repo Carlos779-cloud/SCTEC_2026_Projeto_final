@@ -24,6 +24,12 @@ import keras
 from keras import layers
 
 
+def carregar_modelos(diretorio_modelos="models"):
+    """Carrega todos os modelos salvos no disco (atalho para src.evaluation.carregar_modelos)."""
+    from src.evaluation import carregar_modelos as _carregar_modelos
+    return _carregar_modelos(diretorio_modelos)
+
+
 def treinar_random_forest(X_train, y_train, n_estimators=100, max_depth=None, random_state=42):
     """Treina um classificador Random Forest.
 
